@@ -24,5 +24,4 @@ public class TestDBConeccion {
             System.out.println(e.getMessage());
         }
     }
-    
 }

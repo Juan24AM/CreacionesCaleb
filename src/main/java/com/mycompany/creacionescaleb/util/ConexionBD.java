@@ -13,16 +13,17 @@ import java.sql.SQLException;
  * @author USER
  */
 public class ConexionBD {
+    protected Connection c = null;
     private final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
     private final String IP = "161.132.38.44";
-    private String PORT = "3306";
-    private String DATABASE = "creacionescaleb";
+    private final String PORT = "3306";
+    private final String DATABASE = "creacionescaleb";
     private final String URL = String.format("jdbc:mysql://%s:%s/%s", IP, PORT, DATABASE);
     private final String USER = "proyectoucv";
     private final String PASS = "proyectoucv";
     
     public Connection getConexion() throws SQLException{
-        Connection c = null;
+        
         try {
             c = DriverManager.getConnection(URL, USER, PASS);
             Class.forName(JDBC_DRIVER);
@@ -32,4 +33,11 @@ public class ConexionBD {
         return c;
     }    
     
+    public void closeConexion() throws SQLException {
+        if (c != null) { // Validamos que la conexion sea diferente de null
+            if (!c.isClosed()) { // Validamos de que la conexion no este cerrada
+                c.close(); // Cerramos la conexion.
+            }
+        }
+    }
 }
