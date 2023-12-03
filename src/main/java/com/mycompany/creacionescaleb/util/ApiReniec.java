@@ -12,11 +12,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 import org.json.JSONObject;
+
 /**
  *
  * @author USER
  */
 public class ApiReniec {
+
     // Atributos
     private String dni;
     private String respuesta = "9999";
@@ -26,9 +28,13 @@ public class ApiReniec {
     private int edad;
     private String genero;
     private String feNacimiento;
+    private String fotoPersona;
+    private boolean Obtenerfoto;
 
     public ApiReniec(String dni) {
         this.dni = dni;
+        this.Obtenerfoto = false;
+        this.fotoPersona = null;
         // Llamos al metodo apenas se crea la instancia
         try {
             buscarPorDNI();
@@ -36,7 +42,19 @@ public class ApiReniec {
             e.printStackTrace();
         }
     }
-    
+
+    // Constructor con la opción de foto
+    public ApiReniec(String dni, boolean obtenerfoto) {
+        this.dni = dni;
+        this.Obtenerfoto = obtenerfoto;
+        // Llamos al metodo apenas se crea la instancia
+        try {
+            buscarPorDNI();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public String getDni() {
         return dni;
     }
@@ -92,7 +110,7 @@ public class ApiReniec {
     public void setGenero(String genero) {
         this.genero = genero;
     }
-    
+
     public String getFeNacimiento() {
         return feNacimiento;
     }
@@ -100,7 +118,15 @@ public class ApiReniec {
     public void setFeNacimiento(String feNacimiento) {
         this.feNacimiento = feNacimiento;
     }
-    
+
+    public String getFotoPersona() {
+        return fotoPersona;
+    }
+
+    public void setFotoPersona(String fotoPersona) {
+        this.fotoPersona = fotoPersona;
+    }
+
     // Metodo que establece los valores correspondientes a los atributos
     public void buscarPorDNI() throws IOException {
         try {
@@ -108,16 +134,17 @@ public class ApiReniec {
             Map<String, Object> payload = new LinkedHashMap<>();
             payload.put("txtDocumento", dni);
             payload.put("codigoDocumento", "01");
-            
+
             StringBuilder postData = new StringBuilder();
-            for(Map.Entry<String, Object> payloads : payload.entrySet()){
-                if (postData.length() != 0)
+            for (Map.Entry<String, Object> payloads : payload.entrySet()) {
+                if (postData.length() != 0) {
                     postData.append('&');
+                }
                 postData.append(URLEncoder.encode(payloads.getKey(), "UTF-8"));
                 postData.append('=');
                 postData.append(URLEncoder.encode(String.valueOf(payloads.getValue()), "UTF-8"));
             }
-            
+
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
@@ -126,32 +153,31 @@ public class ApiReniec {
             OutputStreamWriter writer = new OutputStreamWriter(conn.getOutputStream());
             writer.write(postData.toString());
             writer.flush();
-            
+
             Scanner scanner = new Scanner(conn.getInputStream());
             StringBuilder response = new StringBuilder();
-            
+
             // Se recorre la respuesta de la api y con el metodo append vamos agregando linea la respuesta a la varaiable response
             while (scanner.hasNextLine()) {
                 response.append(scanner.nextLine());
             }
-            
+
             JSONObject jsonObject = new JSONObject(response.toString());
             JSONObject dataJson = jsonObject.getJSONObject("dataJson");
             JSONObject persona = dataJson.getJSONObject("persona");
-            System.out.println(persona);
             String resultado = persona.getString("resultado"); // Se busca la key coRespuesta y se obtiene el valor
-            if (resultado.equals("OK")){ // Si la respuesta es "", es decir, es correcta, se obtiene los demas valores
+            if (resultado.equals("OK")) { // Si la respuesta es "", es decir, es correcta, se obtiene los demas valores
                 setRespuesta("0000");
-                String apePaterno = persona.getString("apPaterno"); 
+                String apePaterno = persona.getString("apPaterno");
                 setPaterno(apePaterno);
                 String apeMaterno = persona.getString("apMaterno");
                 setMaterno(apeMaterno);
                 String preNombres = persona.getString("preNombres");
-                        
+
                 preNombres = preNombres.replace(apePaterno, "");
                 preNombres = preNombres.replace(apeMaterno, "");
                 setNombre(preNombres);
-                
+
                 String feNac = persona.getString("feNac");
                 setFeNacimiento(feNac);
                 // Define un formato para la fecha
@@ -165,15 +191,48 @@ public class ApiReniec {
                 // Obtiene el número de años del periodo
                 int edadd = periodo.getYears();
                 setEdad(edadd);
-                
+
                 String coGenero = persona.getString("coGenero");
-                if (coGenero.equals("M"))
-                    setGenero("Masculino");
-                else if (coGenero.equals("F"))
-                   setGenero("Femenino"); 
+                if (coGenero.equals("M")) {
+                    setGenero("MASCULINO");
+                } else if (coGenero.equals("F")) {
+                    setGenero("FEMENINO");
+                }
+
+                if (Obtenerfoto) {
+                    // Cerramos la conexión anterior
+                    conn.disconnect();
+                    scanner.close();
+                    System.out.println("Obteniendo foto xd");
+                    // Obtenemos foto
+                    URL urlFoto = new URL(String.format("http://161.132.47.31:5000/buscardni/%s", dni));
+                    conn = (HttpURLConnection) urlFoto.openConnection();
+                    conn.setRequestMethod("GET");
+                    conn.setRequestProperty("Content-Type", "application/json");
+                    conn.setDoOutput(true);
+
+                    scanner = new Scanner(conn.getInputStream());
+                    StringBuilder responseFoto = new StringBuilder();
+
+                    // Se recorre la respuesta de la API y con el método append vamos agregando línea la respuesta a la variable response
+                    while (scanner.hasNextLine()) {
+                        // Almacena la línea leída en una variable
+                        String line = scanner.nextLine();
+                        // Imprime y procesa la línea almacenada
+                        responseFoto.append(line);
+                    }
+
+                    // Procesa la respuesta JSON después de haber leído todas las líneas
+                    JSONObject jsonObject2 = new JSONObject(responseFoto.toString());
+                    String coRespuesta = jsonObject2.getString("coRespuesta");
+                    if (coRespuesta.equals("0000")) {
+                        String fot = jsonObject2.getString("foto");
+                        setFotoPersona(fot);
+                    }
+                }
             }
         } catch (IOException e) {
             throw e;
-        } 
+        }
     }
 }

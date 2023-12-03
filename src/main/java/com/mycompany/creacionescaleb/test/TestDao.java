@@ -17,6 +17,13 @@ public class TestDao {
         DaoUsuario dao = new DaoUsuarioImpl();
         
         /*
+        // Listar db
+        for (Usuario user : dao.usuarioLista()) {
+            System.out.println(user.getEdad());
+        }
+        */
+        
+        /*
         Usuario usuario = new Usuario();
       
         usuario.setDni("73186544");
@@ -32,15 +39,26 @@ public class TestDao {
         usuario.setDniResponsable("73186544");
         usuario.setTipoUsuario("ADMIN");
         usuario.setUsername("JPORTOCARRERORI");
+        usuario.setPassword("10002000");
         
-        System.out.println(dao.UsuarioInsert(usuario));
+        System.out.println(dao.UsuarioInsert(usuario)); 
         */
+        
         
         /*
         Usuario user1 = dao.UsuarioGet(1, null);
         if (user1 != null)
             System.out.println(user1.getFoto());
 
+        */
+        
+        /*
+        // Login
+        Usuario userLogin = dao.usuarioLogin("jportocarrerori", "10002000");
+        System.out.println(dao.getMensaje());
+        System.out.println(userLogin.getDni());
+        System.out.println(userLogin.getUsername());
+        System.out.println(userLogin.getPassword());
         */
     }
 }

@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 /**
@@ -25,7 +26,45 @@ public class DaoUsuarioImpl implements DaoUsuario {
     public DaoUsuarioImpl() {
         conexion = new ConexionBD();
     }
+    
+    private static String encodeToBase64(String input) {
+        // Convertir la cadena ASCII a bytes
+        byte[] asciiBytes = input.getBytes();
+        // Codificar los bytes en Base64
+        return Base64.getEncoder().encodeToString(asciiBytes);
+    }
+    
+    private static String decodeFromBase64(String input) {
+        // Decodificar la cadena Base64 a bytes
+        byte[] decodedBytes = Base64.getDecoder().decode(input);
+        // Convertir los bytes a cadena
+        return new String(decodedBytes);
+    }
+    
+    private static String encodeToASCII(String input) {
+        StringBuilder encoded = new StringBuilder();
+        for (char character : input.toCharArray()) {
+            // Reemplazar cada caracter por su valor ASCII
+            encoded.append((int) character).append(" ");
+        }
+        return encodeToBase64(encoded.toString().trim());
+    }
 
+    private static String decodeFromASCII(String input) {
+        StringBuilder decoded = new StringBuilder();
+        // Se decodifica la cadena base64
+        String decodeInput = decodeFromBase64(input);
+        // Dividir la cadena en valores ASCII separados por espacios
+        String[] asciiValues = decodeInput.split(" ");
+        for (String asciiValue : asciiValues) {
+            // Convertir el valor ASCII a un caracter y agregarlo a la cadena decodificada
+            char character = (char) Integer.parseInt(asciiValue);
+            decoded.append(character);
+        }
+        return decoded.toString();
+    }
+    
+    
     @Override
     public List<Usuario> usuarioLista() {
         List<Usuario> lista = null;
@@ -44,7 +83,8 @@ public class DaoUsuarioImpl implements DaoUsuario {
                 .append("feCreacion,")
                 .append("dniResponsable,")
                 .append("tipoUsuario,")
-                .append("username")
+                .append("username,")
+                .append("password")
                 .append(" FROM usuario");
         try (Connection c = conexion.getConexion()) {
             PreparedStatement ps = c.prepareStatement(sql.toString());
@@ -66,6 +106,7 @@ public class DaoUsuarioImpl implements DaoUsuario {
                 usuario.setDniResponsable(rs.getString(12));
                 usuario.setTipoUsuario(rs.getString(13));
                 usuario.setUsername(rs.getString(14));
+                usuario.setPassword(rs.getString(15));
                 lista.add(usuario);
             }
         } catch (Exception e) {
@@ -93,7 +134,8 @@ public class DaoUsuarioImpl implements DaoUsuario {
                 .append("feCreacion,")
                 .append("dniResponsable,")
                 .append("tipoUsuario,")
-                .append("username")
+                .append("username,")
+                .append("password")
                 .append(" FROM usuario");
 
         // Verificar si se proporciona un ID o un DNI
@@ -130,6 +172,7 @@ public class DaoUsuarioImpl implements DaoUsuario {
                 usuario.setDniResponsable(rs.getString(12));
                 usuario.setTipoUsuario(rs.getString(13));
                 usuario.setUsername(rs.getString(14));
+                usuario.setPassword(rs.getString(15));
             }
         } catch (Exception e) {
             mensaje = e.getMessage();
@@ -154,8 +197,9 @@ public class DaoUsuarioImpl implements DaoUsuario {
                 .append("feCreacion,") // 10
                 .append("dniResponsable,") // 11
                 .append("tipoUsuario,") // 12
-                .append("username") // 13
-                .append(") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                .append("username,") // 13
+                .append("password") // 14
+                .append(") VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
         try (Connection c = conexion.getConexion()) {
             PreparedStatement ps = c.prepareStatement(sql.toString());
             ps.setString(1, usuario.getDni());
@@ -171,6 +215,7 @@ public class DaoUsuarioImpl implements DaoUsuario {
             ps.setString(11, usuario.getDniResponsable());
             ps.setString(12, usuario.getTipoUsuario());
             ps.setString(13, usuario.getUsername());
+            ps.setString(14, encodeToASCII(usuario.getPassword()));
             int cont = ps.executeUpdate();
             mensaje = (cont == 0) ? "No se insertó" : null;
         } catch (Exception e) {
@@ -195,8 +240,9 @@ public class DaoUsuarioImpl implements DaoUsuario {
                 .append("feCreacion = ?,") // 10
                 .append("dniResponsable = ?,") // 11
                 .append("tipoUsuario = ?,") // 12
-                .append("username = ?") // 13
-                .append(" WHERE id = ?"); // 14
+                .append("username = ?,") // 13
+                .append("password = ?") // 13
+                .append(" WHERE id = ?");
         try (Connection c = conexion.getConexion()) {
             PreparedStatement ps = c.prepareStatement(sql.toString());
             ps.setString(1, usuario.getDni());
@@ -212,7 +258,8 @@ public class DaoUsuarioImpl implements DaoUsuario {
             ps.setString(11, usuario.getDniResponsable());
             ps.setString(12, usuario.getTipoUsuario());
             ps.setString(13, usuario.getUsername());
-            ps.setInt(14, usuario.getId());
+            ps.setString(14, encodeToASCII(usuario.getPassword()));
+            ps.setInt(15, usuario.getId());
             int cont = ps.executeUpdate();
             mensaje = (cont == 0) ? "No se actualizó" : null;
         } catch (Exception e) {
@@ -234,7 +281,7 @@ public class DaoUsuarioImpl implements DaoUsuario {
             System.out.println("Parametros invalidos en Delete!");
             return null;
         }
-        
+
         try (Connection c = conexion.getConexion()) {
             PreparedStatement ps = c.prepareStatement(sql.toString());
             // Establecer el valor del parámetro según si es ID o DNI
@@ -259,7 +306,58 @@ public class DaoUsuarioImpl implements DaoUsuario {
 
     @Override
     public Usuario usuarioLogin(String user, String pass) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Usuario usuario = new Usuario();
+        StringBuilder sql = new StringBuilder();
+        sql.append("SELECT ")
+                .append("id,") // 1
+                .append("dni,") // 2
+                .append("nombres,") // 3
+                .append("paterno,") // 4
+                .append("materno,") // 5
+                .append("genero,") // 6
+                .append("feNacimiento,") // 7
+                .append("edad,") // 8
+                .append("foto,") // 9
+                .append("correo,") // 10
+                .append("feCreacion,") // 11
+                .append("dniResponsable,") // 12
+                .append("tipoUsuario,") // 13
+                .append("username,") // 14
+                .append("password") // 15
+                .append(" FROM usuario")
+                //.append(" WHERE correo = ?")
+                .append(" WHERE (dni = ? OR username = ? OR correo = ?)")
+                .append(" AND password = ?");
+        try (Connection c = conexion.getConexion()) {
+            PreparedStatement ps = c.prepareStatement(sql.toString());
+            ps.setString(1, user);
+            ps.setString(2, user);
+            ps.setString(3, user);
+            ps.setString(4, encodeToASCII(pass));
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                usuario = new Usuario();
+                usuario.setId(rs.getInt(1));
+                usuario.setDni(rs.getString(2));
+                usuario.setNombres(rs.getString(3));
+                usuario.setPaterno(rs.getString(4));
+                usuario.setMaterno(rs.getString(5));
+                usuario.setGenero(rs.getString(6));
+                usuario.setFeNacimiento(rs.getString(7));
+                usuario.setEdad(rs.getInt(8));
+                usuario.setFoto(rs.getString(9));
+                usuario.setCorreo(rs.getString(10));
+                usuario.setFeCreacion(rs.getString(11));
+                usuario.setDniResponsable(rs.getString(12));
+                usuario.setTipoUsuario(rs.getString(13));
+                usuario.setUsername(rs.getString(14));
+                usuario.setPassword(rs.getString(15));
+            }else{
+                mensaje = "Credenciales incorrectas";
+            }
+        } catch (Exception e) {
+            mensaje = e.getMessage();
+        }
+        return usuario;
     }
-
 }
