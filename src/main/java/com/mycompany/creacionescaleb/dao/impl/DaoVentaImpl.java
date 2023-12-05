@@ -110,22 +110,91 @@ public class DaoVentaImpl implements DaoVenta {
 
     @Override
     public String VentaInsert(Venta venta) {
-
+        StringBuilder sql = new StringBuilder();
+        sql.append("INSERT INTO venta(")
+                .append("fecha,")
+                .append("dni,")
+                .append("nombre,")
+                .append("telefono,")
+                .append("metodoPago,")
+                .append("descripcion,")
+                .append("cantidad,")
+                .append("precio,")
+                .append("total")
+                .append(") VALUES (?,?,?,?,?,?,?,?,?)");
+        try (Connection c = conexion.getConexion()) {
+            PreparedStatement ps = c.prepareStatement(sql.toString());
+            ps.setString(1, venta.getFecha());
+            ps.setString(2, venta.getDni());
+            ps.setString(3, venta.getNombre());
+            ps.setString(4, venta.getTelefono());
+            ps.setString(5, venta.getMetodoPago());
+            ps.setString(6, venta.getDescripcion());
+            ps.setInt(7, venta.getCantidad());
+            ps.setDouble(8, venta.getPrecio());
+            ps.setDouble(9, venta.getTotal());
+            int cont = ps.executeUpdate();
+            mensaje = (cont == 0) ? "No se insertó" : null;
+        } catch (Exception e) {
+            mensaje = e.getMessage();
+        }
+        return mensaje;
     }
 
     @Override
     public String VentaUptdate(Venta venta) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        StringBuilder sql = new StringBuilder();
+        sql.append("UPDATE venta SET ")
+                .append("fecha = ?,")
+                .append("dni = ?,")
+                .append("nombre = ?,")
+                .append("telefono = ?,")
+                .append("metodoPago = ?,")
+                .append("descripcion = ?,")
+                .append("cantidad = ?,")
+                .append("precio = ?,")
+                .append("total = ? ")
+                .append("WHERE idVenta = ?");  // 1
+        try (Connection c = conexion.getConexion()) {
+            PreparedStatement ps = c.prepareStatement(sql.toString());
+            ps.setString(1, venta.getFecha());
+            ps.setString(2, venta.getDni());
+            ps.setString(3, venta.getNombre());
+            ps.setString(4, venta.getTelefono());
+            ps.setString(5, venta.getMetodoPago());
+            ps.setString(6, venta.getDescripcion());
+            ps.setInt(7, venta.getCantidad());
+            ps.setDouble(8, venta.getPrecio());
+            ps.setDouble(9, venta.getTotal());
+            ps.setInt(10, venta.getIdVenta());
+            int cont = ps.executeUpdate();
+            mensaje = (cont == 0) ? "No se actualizó" : null;
+        } catch (Exception e) {
+            mensaje = e.getMessage();
+        }
+        return mensaje;
     }
 
     @Override
     public String VentaDelete(Integer id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        StringBuilder sql = new StringBuilder();
+        sql.append("DELETE FROM usuario");
+        sql.append(" WHERE id = ?");
+        try (Connection c = conexion.getConexion()) {
+            PreparedStatement ps = c.prepareStatement(sql.toString());
+            ps.setInt(1, id);
+            int cont = ps.executeUpdate();
+            mensaje = (cont == 0) ? "No se eliminó" : null;
+        } catch (Exception e) {
+            mensaje = e.getMessage();
+            System.out.println(mensaje);
+        }
+        return mensaje;
     }
-
+    
     @Override
     public String getMensaje() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return mensaje;
     }
 
 }
