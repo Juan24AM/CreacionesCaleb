@@ -161,11 +161,8 @@ public class Login extends javax.swing.JFrame {
             if (dao.getMensaje() == null) {
                 String nombres = personLogin.getNombres();
                 JOptionPane.showMessageDialog(this, String.format("BIENVENDO, %s", nombres), "AVISO", JOptionPane.INFORMATION_MESSAGE);
-                java.awt.EventQueue.invokeLater(new Runnable() {
-                    public void run() {
-                        new Dashboard().setVisible(true);
-                    }
-                });
+                Dashboard dashboard = new Dashboard(personLogin);
+                dashboard.setVisible(true);
                 dispose();
             } else {
                 JOptionPane.showMessageDialog(this, dao.getMensaje(), "AVISO", JOptionPane.ERROR_MESSAGE);

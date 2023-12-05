@@ -27,6 +27,8 @@ public class DaoUsuarioImpl implements DaoUsuario {
         conexion = new ConexionBD();
     }
     
+    // Util Encode #########################################
+    
     private static String encodeToBase64(String input) {
         // Convertir la cadena ASCII a bytes
         byte[] asciiBytes = input.getBytes();
@@ -64,6 +66,7 @@ public class DaoUsuarioImpl implements DaoUsuario {
         return decoded.toString();
     }
     
+    // ##############################################
     
     @Override
     public List<Usuario> usuarioLista() {
@@ -106,7 +109,7 @@ public class DaoUsuarioImpl implements DaoUsuario {
                 usuario.setDniResponsable(rs.getString(12));
                 usuario.setTipoUsuario(rs.getString(13));
                 usuario.setUsername(rs.getString(14));
-                usuario.setPassword(rs.getString(15));
+                usuario.setPassword(decodeFromASCII(rs.getString(15)));
                 lista.add(usuario);
             }
         } catch (Exception e) {
@@ -172,7 +175,7 @@ public class DaoUsuarioImpl implements DaoUsuario {
                 usuario.setDniResponsable(rs.getString(12));
                 usuario.setTipoUsuario(rs.getString(13));
                 usuario.setUsername(rs.getString(14));
-                usuario.setPassword(rs.getString(15));
+                usuario.setPassword(decodeFromASCII(rs.getString(15)));
             }
         } catch (Exception e) {
             mensaje = e.getMessage();
@@ -351,7 +354,7 @@ public class DaoUsuarioImpl implements DaoUsuario {
                 usuario.setDniResponsable(rs.getString(12));
                 usuario.setTipoUsuario(rs.getString(13));
                 usuario.setUsername(rs.getString(14));
-                usuario.setPassword(rs.getString(15));
+                usuario.setPassword(decodeFromASCII(rs.getString(15)));
             }else{
                 mensaje = "Credenciales incorrectas";
             }
