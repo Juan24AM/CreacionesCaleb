@@ -1,11 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package com.mycompany.creacionescaleb.view.subpaginas;
 
+import com.mycompany.creacionescaleb.dao.DaoProducto;
+import com.mycompany.creacionescaleb.dao.impl.DaoProductoImpl;
+import com.mycompany.creacionescaleb.entidades.Producto;
 import com.mycompany.creacionescaleb.view.Dashboard;
+import java.util.List;
 import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -18,8 +19,9 @@ public class InventarioJPanel extends javax.swing.JPanel {
      */
     public InventarioJPanel() {
         initComponents();
+        LoadProducts();
     }
-        
+
     private void invocarBotonNuevo() {
         // Crear una instancia de RegistroInventarioJPanel
         RegistroInventarioJPanel invt = new RegistroInventarioJPanel();
@@ -32,7 +34,22 @@ public class InventarioJPanel extends javax.swing.JPanel {
             invt.setFotoProducto();
         });
     }
-    
+
+    private void LoadProducts() {
+        try {
+            DaoProducto dao = new DaoProductoImpl();
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+
+            // Borrar todas las filas existentes en el modelo
+            model.setRowCount(0);
+
+            // Agregar las nuevas filas al modelo
+            dao.productoLista().forEach((u) -> model.addRow(new Object[]{u.getId(), u.getNombre(), u.getDescripcion(), u.getPrecio(), u.getStock(), u.getGenero(), u.getTipo(), u.getFechaIngreso()}));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -71,13 +88,13 @@ public class InventarioJPanel extends javax.swing.JPanel {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "ID", "Nombre", "Descripcion", "Precio", "Stock", "Genero", "Tipo", "Fecha de Ingreso"
             }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -85,6 +102,11 @@ public class InventarioJPanel extends javax.swing.JPanel {
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, 690, 230));
 
         jButton1.setText("BORRAR");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 400, 120, 50));
 
         jButton2.setText("NUEVO");
@@ -96,6 +118,11 @@ public class InventarioJPanel extends javax.swing.JPanel {
         jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 400, 120, 50));
 
         jButton3.setText("EDITAR");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 400, 120, 50));
 
         jLabel2.setText("Tipo");
@@ -133,6 +160,11 @@ public class InventarioJPanel extends javax.swing.JPanel {
         jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 70, 270, 40));
 
         jButton4.setText("BUSCAR");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 70, 120, 40));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -151,7 +183,59 @@ public class InventarioJPanel extends javax.swing.JPanel {
         invocarBotonNuevo();
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        
+    }//GEN-LAST:event_jButton4ActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        DaoProducto dao = new DaoProductoImpl();
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        if (jTable1.getSelectedRows().length < 1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Debes seleccionar uno o más usuarios a eliminar.\n", "AVISO", javax.swing.JOptionPane.ERROR_MESSAGE);
+        } else {
+            for (int i : jTable1.getSelectedRows()) {
+                try {
+                    dao.ProductoDelete((int) jTable1.getValueAt(i, 0));
+                    model.removeRow(i);
+                    javax.swing.JOptionPane.showMessageDialog(this, "Producto eliminado correctamente.", "AVISO", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow != -1) {
+            try {
+                int productId = (int) jTable1.getValueAt(selectedRow, 0);
+                invocarBotonEditar(productId);
+                //DaoProducto dao = new DaoProductoImpl();
+                //Dashboard.showJPanel(new RegistroInventarioJPanel(dao.productoGet(productId)));
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Debes seleccionar el usuario a editar.\n", "AVISO", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
+    
+    private void invocarBotonEditar(Integer productId) {
+        DaoProducto dao = new DaoProductoImpl();
+        Producto productEdit = dao.productoGet(productId);
+        // Crear una instancia de RegistroInventarioJPanel
+        RegistroInventarioJPanel invt = new RegistroInventarioJPanel(productEdit);
+
+        // Mostrar la instancia en el Dashboard
+        Dashboard.showJPanel(invt);
+
+        // Establecer la foto del producto en la misma instancia
+        SwingUtilities.invokeLater(() -> {
+            invt.setImageEdit();
+        });
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

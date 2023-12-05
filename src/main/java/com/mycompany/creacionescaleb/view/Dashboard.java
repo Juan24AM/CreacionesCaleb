@@ -414,8 +414,6 @@ public class Dashboard extends javax.swing.JFrame {
         SwingUtilities.invokeLater(() -> invt.setFotoProducto());*/
         InventarioJPanel invt = new InventarioJPanel();
         showJPanel(invt);
-        
-        
     }//GEN-LAST:event_btnInventarioActionPerformed
     
     public void setColorButtons(String name) {
@@ -429,7 +427,6 @@ public class Dashboard extends javax.swing.JFrame {
             case "Inventario" -> btnInventario.setBackground(colorSelect);
             case "Usuarios" -> btnUsuarios.setBackground(colorSelect);
         }
-        
     }
     
     private void setDefaultColorBotones() {

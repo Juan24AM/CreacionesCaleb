@@ -12,6 +12,9 @@ import java.awt.Image;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -27,9 +30,58 @@ public class RegistroInventarioJPanel extends javax.swing.JPanel {
     /**
      * Creates new form RegistroInventarioJPanel
      */
+    boolean isEdition = false;
     Producto producto = new Producto();
+
     public RegistroInventarioJPanel() {
         initComponents();
+    }
+
+    public RegistroInventarioJPanel(Producto producto) {
+        initComponents();
+        this.producto = producto;
+        isEdition = true;
+        editionMode();
+    }
+
+    public void editionMode() {
+        if (isEdition) {
+            jLabel1.setText("Edicion de producto:");
+            jButton2.setText("EDITAR");
+
+            jTextField2.setText(producto.getNombre());
+            jTextField3.setText(producto.getDescripcion());
+            jTextField4.setText(String.valueOf(producto.getPrecio()));
+            jTextField5.setText(String.valueOf(producto.getStock()));
+            String generoEdit = producto.getGenero();
+            switch (generoEdit) {
+                case "Hombre" ->
+                    jComboBox1.setSelectedIndex(1);
+                case "Mujer" ->
+                    jComboBox1.setSelectedIndex(2);
+                case "Niño" ->
+                    jComboBox1.setSelectedIndex(3);
+                case "Niña" ->
+                    jComboBox1.setSelectedIndex(4);
+            }
+
+            String tipoEdit = producto.getTipo();
+            switch (tipoEdit) {
+                case "Jean" ->
+                    jComboBox2.setSelectedIndex(1);
+                case "Short" ->
+                    jComboBox2.setSelectedIndex(2);
+                case "Pitillo" ->
+                    jComboBox2.setSelectedIndex(3);
+                case "Baggy" ->
+                    jComboBox2.setSelectedIndex(4);
+            }
+            jTextField6.setText(producto.getFechaIngreso());
+        }
+    }
+
+    public void setImageEdit() {
+        setFotoInLabel(jLabel10, producto.getFotoProducto(), null);
     }
 
     /**
@@ -95,8 +147,8 @@ public class RegistroInventarioJPanel extends javax.swing.JPanel {
         jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Seleccione", "Jean", "Short", "Pitillo", "Baggy" }));
         jPanel1.add(jComboBox2, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 70, 160, 30));
 
-        jLabel9.setText("Frecha de ingreso:");
-        jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 100, 100, 20));
+        jLabel9.setText("Fecha de ingreso:");
+        jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 100, 120, 20));
         jPanel1.add(jTextField6, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 120, 160, 30));
 
         jButton1.setText("IMAGE ICON");
@@ -132,7 +184,7 @@ public class RegistroInventarioJPanel extends javax.swing.JPanel {
         JFileChooser ficAbrirArchivo = new JFileChooser();
         ficAbrirArchivo.setFileFilter(new FileNameExtensionFilter("Buscar imagen de articulo", "jpg", "jpeg", "png"));
         int respuesta = ficAbrirArchivo.showOpenDialog(this);
-        
+
         if (respuesta == JFileChooser.APPROVE_OPTION) {
             File archivoImagen = ficAbrirArchivo.getSelectedFile();
             try {
@@ -149,13 +201,13 @@ public class RegistroInventarioJPanel extends javax.swing.JPanel {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         DaoProducto dao = new DaoProductoImpl();
         String nombre = jTextField2.getText();
-        String descripcion = jTextField3.getText(); 
+        String descripcion = jTextField3.getText();
         double precio = Double.parseDouble(jTextField4.getText());
         int Stock = Integer.parseInt(jTextField5.getText());
         String genero = String.valueOf(jComboBox1.getSelectedItem());
         String tipo = String.valueOf(jComboBox2.getSelectedItem());
         String feIngreso = jTextField6.getText();
-        
+
         producto.setNombre(nombre);
         producto.setDescripcion(descripcion);
         producto.setPrecio(precio);
@@ -163,11 +215,39 @@ public class RegistroInventarioJPanel extends javax.swing.JPanel {
         producto.setGenero(genero);
         producto.setTipo(tipo);
         producto.setFechaIngreso(feIngreso);
-        
-        String insert = dao.ProductoInsert(producto);
-        System.out.println(insert);
+
+        try {
+            String insert;
+
+            if (!isEdition) {
+                insert = dao.ProductoInsert(producto);
+            } else {
+                insert = dao.ProductoUptdate(producto);
+            }
+            
+            System.out.println(insert);
+            
+            String successMsg = isEdition ? "modificado" : "registrado";
+
+            javax.swing.JOptionPane.showMessageDialog(this, "Producto " + successMsg + " exitosamente.", "AVISO", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+
+            if (!isEdition) {
+                jTextField2.setText("");
+                jTextField3.setText("");
+                jTextField4.setText("");
+                jTextField5.setText("");
+                jComboBox1.setSelectedIndex(0);
+                jComboBox2.setSelectedIndex(0);
+                jTextField6.setText("");
+                setFotoProducto();
+            }
+        } catch (Exception e) {
+            String errorMsg = isEdition ? "modificar" : "registrar";
+            javax.swing.JOptionPane.showMessageDialog(this, "Ocurrió un error al " + errorMsg + " el Producto.", "AVISO", javax.swing.JOptionPane.ERROR_MESSAGE);
+            System.out.println(e.getMessage());
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
-    
+
     private byte[] convertirArchivoABytes(File archivo) throws IOException {
         FileInputStream fis = new FileInputStream(archivo);
         byte[] bytes = new byte[(int) archivo.length()];
@@ -175,7 +255,7 @@ public class RegistroInventarioJPanel extends javax.swing.JPanel {
         fis.close();
         return bytes;
     }
-    
+
     private void setFotoInLabel(JLabel labelName, String base64Image, String root) {
         ImageIcon image = null;
         if (root == null) {
@@ -185,15 +265,28 @@ public class RegistroInventarioJPanel extends javax.swing.JPanel {
             String fotoPersona = root;
             image = new ImageIcon(fotoPersona);
         }
-        
+
         Icon icon = new ImageIcon(
                 image.getImage().getScaledInstance(labelName.getWidth(), labelName.getHeight(), Image.SCALE_DEFAULT));
         labelName.setIcon(icon);
         this.repaint();
     }
-    
+
     public void setFotoProducto() {
-        setFotoInLabel(jLabel10, null, "src/main/resources/jeans.jpeg");
+        String rutaFoto = "src/main/resources/jeans.jpeg";
+        setFotoInLabel(jLabel10, null, rutaFoto);
+        String imageDefault = CodificarDecoficarBase64.encodeImage(convertImageToBytes(rutaFoto));
+        producto.setFotoProducto(imageDefault);
+    }
+
+    private static byte[] convertImageToBytes(String imagePath) {
+        try {
+            Path path = Paths.get(imagePath);
+            return Files.readAllBytes(path);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -202,7 +295,7 @@ public class RegistroInventarioJPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
+    public static javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;

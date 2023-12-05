@@ -23,7 +23,7 @@ public class DaoProductoImpl implements DaoProducto {
     }
 
     @Override
-    public List<Producto> usuarioLista() {
+    public List<Producto> productoLista() {
         List<Producto> lista = null;
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT ")
@@ -32,11 +32,11 @@ public class DaoProductoImpl implements DaoProducto {
                 .append("descripcion,")
                 .append("precio,")
                 .append("stock,")
+                .append("genero,")
                 .append("tipo,")
                 .append("fotoProducto,")
                 .append("fechaIngreso")
                 .append(" FROM producto");
-
         try (Connection c = conexion.getConexion()) {
             PreparedStatement ps = c.prepareStatement(sql.toString());
             ResultSet rs = ps.executeQuery();
@@ -44,12 +44,15 @@ public class DaoProductoImpl implements DaoProducto {
             while (rs.next()) {
                 Producto producto = new Producto();
                 producto.setId(rs.getInt(1));
+                producto.setNombre(rs.getString(2));
                 producto.setDescripcion(rs.getString(3));
                 producto.setPrecio(rs.getDouble(4));
                 producto.setStock(rs.getInt(5));
-                producto.setTipo(rs.getString(6));
-                producto.setFotoProducto(rs.getString(7));
-                producto.setFechaIngreso(rs.getString(8));
+                producto.setGenero(rs.getString(7));
+                producto.setTipo(rs.getString(7));
+                producto.setFotoProducto(rs.getString(8));
+                producto.setFechaIngreso(rs.getString(9));
+                lista.add(producto);
             }
         } catch (Exception e) {
             mensaje = e.getMessage();
@@ -68,12 +71,12 @@ public class DaoProductoImpl implements DaoProducto {
                 .append("descripcion,")
                 .append("precio,")
                 .append("stock,")
+                .append("genero,")
                 .append("tipo,")
                 .append("fotoProducto,")
                 .append("fechaIngreso")
                 .append(" FROM producto")
                 .append(" WHERE id = ?");
-
         try (Connection c = conexion.getConexion()) {
             PreparedStatement ps = c.prepareStatement(sql.toString());
             ps.setInt(1, id);
@@ -81,12 +84,14 @@ public class DaoProductoImpl implements DaoProducto {
             if (rs.next()) {
                 producto = new Producto();
                 producto.setId(rs.getInt(1));
+                producto.setNombre(rs.getString(2));
                 producto.setDescripcion(rs.getString(3));
                 producto.setPrecio(rs.getDouble(4));
                 producto.setStock(rs.getInt(5));
-                producto.setTipo(rs.getString(6));
-                producto.setFotoProducto(rs.getString(7));
-                producto.setFechaIngreso(rs.getString(8));
+                producto.setGenero(rs.getString(6));
+                producto.setTipo(rs.getString(7));
+                producto.setFotoProducto(rs.getString(8));
+                producto.setFechaIngreso(rs.getString(9));
             }
         } catch (Exception e) {
             mensaje = e.getMessage();
@@ -103,19 +108,21 @@ public class DaoProductoImpl implements DaoProducto {
                 .append("descripcion,")
                 .append("precio,")
                 .append("stock,")
+                .append("genero,")
                 .append("tipo,")
                 .append("fotoProducto,")
                 .append("fechaIngreso")
-                .append(") VALUES (?,?,?,?,?,?,?)");
+                .append(") VALUES (?,?,?,?,?,?,?,?)");
         try (Connection c = conexion.getConexion()) {
             PreparedStatement ps = c.prepareStatement(sql.toString());
             ps.setString(1, producto.getNombre());
             ps.setString(2, producto.getDescripcion());
             ps.setDouble(3, producto.getPrecio());
             ps.setInt(4, producto.getStock());
-            ps.setString(5, producto.getTipo());
-            ps.setString(6, producto.getFotoProducto());
-            ps.setString(7, producto.getFechaIngreso());
+            ps.setString(5, producto.getGenero());
+            ps.setString(6, producto.getTipo());
+            ps.setString(7, producto.getFotoProducto());
+            ps.setString(8, producto.getFechaIngreso());
             int cont = ps.executeUpdate();
             mensaje = (cont == 0) ? "No se insertó" : null;
         } catch (Exception e) {
@@ -132,6 +139,7 @@ public class DaoProductoImpl implements DaoProducto {
                 .append("descripcion = ?,") // 2
                 .append("precio = ?,") // 3
                 .append("stock = ?,") // 4
+                .append("genero = ?,") // 4
                 .append("tipo = ?,") // 5
                 .append("fotoProducto = ?,") // 6
                 .append("fechaIngreso = ?") // 7
@@ -142,10 +150,13 @@ public class DaoProductoImpl implements DaoProducto {
             ps.setString(2, producto.getDescripcion());
             ps.setDouble(3, producto.getPrecio());
             ps.setInt(4, producto.getStock());
-            ps.setString(5, producto.getTipo());
-            ps.setString(6, producto.getFotoProducto());
-            ps.setString(7, producto.getFechaIngreso());
-            ps.setInt(8, producto.getId());
+            ps.setString(5, producto.getGenero());
+            ps.setString(6, producto.getTipo());
+            ps.setString(7, producto.getFotoProducto());
+            ps.setString(8, producto.getFechaIngreso());
+            ps.setInt(9, producto.getId());
+            int cont = ps.executeUpdate();
+            mensaje = (cont == 0) ? "No se actualizó" : null;
         } catch (Exception e) {
             mensaje = e.getMessage();
             System.out.println(mensaje);
@@ -169,7 +180,6 @@ public class DaoProductoImpl implements DaoProducto {
         }
         return mensaje;
     }
-
     @Override
     public String getMensaje() {
         return mensaje;

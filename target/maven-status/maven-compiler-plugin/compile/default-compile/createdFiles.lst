@@ -1,4 +1,5 @@
 com\mycompany\creacionescaleb\test\TestDBConeccion.class
+com\mycompany\creacionescaleb\view\subpaginas\InventarioJPanel$4.class
 com\mycompany\creacionescaleb\dao\DaoProducto.class
 com\mycompany\creacionescaleb\entidades\Persona.class
 com\mycompany\creacionescaleb\view\subpaginas\RegistroInventarioJPanel.class
@@ -8,6 +9,7 @@ com\mycompany\creacionescaleb\view\Login$2.class
 com\mycompany\creacionescaleb\view\subpaginas\VentasJPanel.class
 com\mycompany\creacionescaleb\dao\impl\DaoProductoImpl.class
 com\mycompany\creacionescaleb\view\subpaginas\InventarioJPanel$1.class
+com\mycompany\creacionescaleb\view\subpaginas\InventarioJPanel$2.class
 com\mycompany\creacionescaleb\dao\DaoUsuario.class
 com\mycompany\creacionescaleb\view\subpaginas\HomeJPanel.class
 com\mycompany\creacionescaleb\view\Dashboard$2.class
@@ -25,6 +27,7 @@ com\mycompany\creacionescaleb\view\Login$1.class
 com\mycompany\creacionescaleb\test\TestDao.class
 com\mycompany\creacionescaleb\view\subpaginas\PerfilJPanel$1.class
 com\mycompany\creacionescaleb\view\subpaginas\PerfilJPanel.class
+com\mycompany\creacionescaleb\view\subpaginas\InventarioJPanel$3.class
 com\mycompany\creacionescaleb\dao\impl\DaoUsuarioImpl.class
 com\mycompany\creacionescaleb\test\TestApi.class
 com\mycompany\creacionescaleb\entidades\Usuario.class
