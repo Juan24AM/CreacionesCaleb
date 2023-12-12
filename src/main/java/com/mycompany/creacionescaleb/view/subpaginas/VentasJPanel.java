@@ -4,7 +4,12 @@
  */
 package com.mycompany.creacionescaleb.view.subpaginas;
 
+import com.mycompany.creacionescaleb.dao.DaoVenta;
+import com.mycompany.creacionescaleb.dao.impl.DaoVentaImpl;
+import com.mycompany.creacionescaleb.view.Dashboard;
 import java.awt.Dimension;
+import javax.swing.SwingUtilities;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -17,8 +22,24 @@ public class VentasJPanel extends javax.swing.JPanel {
      */
     public VentasJPanel() {
         initComponents();
+        LoadVentas();
     }
-    
+
+    private void LoadVentas() {
+        try {
+            DaoVenta dao = new DaoVentaImpl();
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+
+            // Borrar todas las filas existentes en el modelo
+            model.setRowCount(0);
+
+            // Agregar las nuevas filas al modelo
+            dao.VentaLista().forEach((u) -> model.addRow(new Object[]{u.getIdVenta(), u.getFecha(), u.getDni(), u.getNombre(), u.getTelefono(), u.getMetodoPago(), u.getDescripcion(), u.getCantidad(), u.getPrecio(), u.getTotal()}));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -35,7 +56,9 @@ public class VentasJPanel extends javax.swing.JPanel {
         jButton4 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable2 = new javax.swing.JTable();
+        jTable1 = new javax.swing.JTable();
+        jTextField1 = new javax.swing.JTextField();
+        jButton3 = new javax.swing.JButton();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -44,15 +67,25 @@ public class VentasJPanel extends javax.swing.JPanel {
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 220, 40));
 
         jButton1.setText("BORRAR");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 420, 100, 40));
 
         jButton2.setText("NUEVO");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 420, 100, 40));
 
         jButton4.setText("EDITAR");
         jPanel1.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 420, 100, 40));
 
-        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null, null, null, null},
@@ -63,11 +96,15 @@ public class VentasJPanel extends javax.swing.JPanel {
                 "ID Venta", "FECHA", "DNI", "NOMBRE", "NUMERO", "METODO DE PAGO", "DESCRIPCION", "CANTIDAD", "PRECIO", "TOTAL"
             }
         ));
-        jScrollPane2.setViewportView(jTable2);
+        jScrollPane2.setViewportView(jTable1);
 
         jScrollPane1.setViewportView(jScrollPane2);
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, 720, 250));
+        jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 50, 480, 50));
+
+        jButton3.setText("BUSCAR");
+        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 50, 110, 50));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -81,15 +118,46 @@ public class VentasJPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void invocarBotonNuevo() {
+        // Crear una instancia de RegistroInventarioJPanel
+        RegistroVentaJPanel invt = new RegistroVentaJPanel();
+
+        // Mostrar la instancia en el Dashboard
+        Dashboard.showJPanel(invt);
+    }
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        invocarBotonNuevo();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        DaoVenta dao = new DaoVentaImpl();
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        if (jTable1.getSelectedRows().length < 1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Debes seleccionar uno o mas ventas a eliminar.\n", "AVISO", javax.swing.JOptionPane.ERROR_MESSAGE);
+        } else {
+            for (int i : jTable1.getSelectedRows()) {
+                try {
+                    dao.VentaDelete((int) jTable1.getValueAt(i, 0));
+                    model.removeRow(i);
+                    javax.swing.JOptionPane.showMessageDialog(this, "Venta eliminado correctamente.", "AVISO", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable2;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }

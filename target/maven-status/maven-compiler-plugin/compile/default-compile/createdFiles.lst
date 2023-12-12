@@ -4,7 +4,9 @@ com\mycompany\creacionescaleb\util\CodificarDecoficarBase64.class
 com\mycompany\creacionescaleb\view\Dashboard$5.class
 com\mycompany\creacionescaleb\view\subpaginas\VentasJPanel.class
 com\mycompany\creacionescaleb\view\subpaginas\InventarioJPanel$2.class
+com\mycompany\creacionescaleb\view\subpaginas\VentasJPanel$1.class
 com\mycompany\creacionescaleb\view\Dashboard$2.class
+com\mycompany\creacionescaleb\view\subpaginas\RegistroVentaJPanel$2.class
 com\mycompany\creacionescaleb\entidades\Venta.class
 com\mycompany\creacionescaleb\view\subpaginas\RegistroInventarioJPanel$2.class
 com\mycompany\creacionescaleb\entidades\Producto.class
@@ -22,7 +24,9 @@ com\mycompany\creacionescaleb\entidades\Usuario.class
 com\mycompany\creacionescaleb\test\TestDBConeccion.class
 com\mycompany\creacionescaleb\view\subpaginas\InventarioJPanel$4.class
 com\mycompany\creacionescaleb\dao\impl\DaoVentaImpl.class
+com\mycompany\creacionescaleb\view\subpaginas\VentasJPanel$2.class
 com\mycompany\creacionescaleb\view\subpaginas\RegistroInventarioJPanel.class
+com\mycompany\creacionescaleb\view\subpaginas\RegistroVentaJPanel$1.class
 com\mycompany\creacionescaleb\view\Login$2.class
 com\mycompany\creacionescaleb\dao\DaoVenta.class
 com\mycompany\creacionescaleb\dao\impl\DaoProductoImpl.class
@@ -30,6 +34,7 @@ com\mycompany\creacionescaleb\view\subpaginas\InventarioJPanel$1.class
 com\mycompany\creacionescaleb\dao\DaoUsuario.class
 com\mycompany\creacionescaleb\view\subpaginas\HomeJPanel.class
 com\mycompany\creacionescaleb\view\Login.class
+com\mycompany\creacionescaleb\view\subpaginas\RegistroVentaJPanel.class
 com\mycompany\creacionescaleb\view\Dashboard$1.class
 com\mycompany\creacionescaleb\view\Dashboard$4.class
 com\mycompany\creacionescaleb\view\subpaginas\PerfilJPanel$2.class
