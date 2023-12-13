@@ -8,6 +8,7 @@ import com.mycompany.creacionescaleb.dao.DaoProducto;
 import com.mycompany.creacionescaleb.dao.impl.DaoProductoImpl;
 import com.mycompany.creacionescaleb.entidades.Producto;
 import com.mycompany.creacionescaleb.util.CodificarDecoficarBase64;
+import com.mycompany.creacionescaleb.view.Dashboard;
 import java.awt.Image;
 import java.io.File;
 import java.io.FileInputStream;
@@ -15,6 +16,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -32,7 +35,9 @@ public class RegistroInventarioJPanel extends javax.swing.JPanel {
      */
     boolean isEdition = false;
     Producto producto = new Producto();
-
+        
+    SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+    
     public RegistroInventarioJPanel() {
         initComponents();
     }
@@ -76,7 +81,12 @@ public class RegistroInventarioJPanel extends javax.swing.JPanel {
                 case "Baggy" ->
                     jComboBox2.setSelectedIndex(4);
             }
-            jTextField6.setText(producto.getFechaIngreso());
+            try {
+                jDateFecha.setDate(formato.parse(producto.getFechaIngreso()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            
         }
     }
 
@@ -108,10 +118,11 @@ public class RegistroInventarioJPanel extends javax.swing.JPanel {
         jLabel8 = new javax.swing.JLabel();
         jComboBox2 = new javax.swing.JComboBox<>();
         jLabel9 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
+        jDateFecha = new com.toedter.calendar.JDateChooser();
+        jButton3 = new javax.swing.JButton();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -149,7 +160,6 @@ public class RegistroInventarioJPanel extends javax.swing.JPanel {
 
         jLabel9.setText("Fecha de ingreso:");
         jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 100, 120, 20));
-        jPanel1.add(jTextField6, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 120, 160, 30));
 
         jButton1.setText("IMAGE ICON");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -167,6 +177,19 @@ public class RegistroInventarioJPanel extends javax.swing.JPanel {
             }
         });
         jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 380, 160, 50));
+
+        jDateFecha.setBackground(new java.awt.Color(255, 255, 255));
+        jDateFecha.setForeground(new java.awt.Color(0, 153, 153));
+        jDateFecha.setDateFormatString("dd/MM/yyyy");
+        jPanel1.add(jDateFecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 120, 160, 30));
+
+        jButton3.setText("REGRESAR");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 380, 140, 50));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -206,7 +229,7 @@ public class RegistroInventarioJPanel extends javax.swing.JPanel {
         int Stock = Integer.parseInt(jTextField5.getText());
         String genero = String.valueOf(jComboBox1.getSelectedItem());
         String tipo = String.valueOf(jComboBox2.getSelectedItem());
-        String feIngreso = jTextField6.getText();
+        String feIngreso = formato.format(jDateFecha.getDate());
 
         producto.setNombre(nombre);
         producto.setDescripcion(descripcion);
@@ -238,7 +261,7 @@ public class RegistroInventarioJPanel extends javax.swing.JPanel {
                 jTextField5.setText("");
                 jComboBox1.setSelectedIndex(0);
                 jComboBox2.setSelectedIndex(0);
-                jTextField6.setText("");
+                jDateFecha.setDate(null);
                 setFotoProducto();
             }
         } catch (Exception e) {
@@ -247,6 +270,11 @@ public class RegistroInventarioJPanel extends javax.swing.JPanel {
             System.out.println(e.getMessage());
         }
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        VentasJPanel invt = new VentasJPanel();
+        Dashboard.showJPanel(invt);
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     private byte[] convertirArchivoABytes(File archivo) throws IOException {
         FileInputStream fis = new FileInputStream(archivo);
@@ -292,8 +320,10 @@ public class RegistroInventarioJPanel extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JComboBox<String> jComboBox2;
+    private com.toedter.calendar.JDateChooser jDateFecha;
     private javax.swing.JLabel jLabel1;
     public static javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel3;
@@ -308,6 +338,5 @@ public class RegistroInventarioJPanel extends javax.swing.JPanel {
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
     // End of variables declaration//GEN-END:variables
 }

@@ -14,5 +14,6 @@ public interface DaoProducto {
     String ProductoInsert(Producto producto);
     String ProductoUptdate(Producto producto);
     String ProductoDelete(Integer id);
+    String ProductoActualizarStock(Integer id, Integer cantidadVendida);
     String getMensaje();
 }

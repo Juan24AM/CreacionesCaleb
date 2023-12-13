@@ -3,12 +3,14 @@ com\mycompany\creacionescaleb\entidades\Persona.class
 com\mycompany\creacionescaleb\util\CodificarDecoficarBase64.class
 com\mycompany\creacionescaleb\view\Dashboard$5.class
 com\mycompany\creacionescaleb\view\subpaginas\VentasJPanel.class
+com\mycompany\creacionescaleb\view\subpaginas\RegistroInventarioJPanel$3.class
 com\mycompany\creacionescaleb\view\subpaginas\InventarioJPanel$2.class
 com\mycompany\creacionescaleb\view\subpaginas\VentasJPanel$1.class
 com\mycompany\creacionescaleb\view\Dashboard$2.class
 com\mycompany\creacionescaleb\view\subpaginas\RegistroVentaJPanel$2.class
 com\mycompany\creacionescaleb\entidades\Venta.class
 com\mycompany\creacionescaleb\view\subpaginas\RegistroInventarioJPanel$2.class
+com\mycompany\creacionescaleb\view\subpaginas\RegistroVentaJPanel$4.class
 com\mycompany\creacionescaleb\entidades\Producto.class
 com\mycompany\creacionescaleb\view\Dashboard.class
 com\mycompany\creacionescaleb\view\subpaginas\InventarioJPanel.class
@@ -38,6 +40,8 @@ com\mycompany\creacionescaleb\view\subpaginas\RegistroVentaJPanel.class
 com\mycompany\creacionescaleb\view\Dashboard$1.class
 com\mycompany\creacionescaleb\view\Dashboard$4.class
 com\mycompany\creacionescaleb\view\subpaginas\PerfilJPanel$2.class
+com\mycompany\creacionescaleb\view\subpaginas\VentasJPanel$3.class
 com\mycompany\creacionescaleb\util\ConexionBD.class
+com\mycompany\creacionescaleb\view\subpaginas\RegistroVentaJPanel$3.class
 com\mycompany\creacionescaleb\util\ApiReniec.class
 com\mycompany\creacionescaleb\view\subpaginas\RegistroInventarioJPanel$1.class

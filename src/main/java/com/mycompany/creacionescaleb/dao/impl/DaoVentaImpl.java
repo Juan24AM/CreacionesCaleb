@@ -32,6 +32,7 @@ public class DaoVentaImpl implements DaoVenta {
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT ")
                 .append("idVenta,")
+                .append("idProducto,")
                 .append("fecha,")
                 .append("dni,")
                 .append("nombre,")
@@ -49,15 +50,16 @@ public class DaoVentaImpl implements DaoVenta {
             while (rs.next()) {
                 Venta venta = new Venta();
                 venta.setIdVenta(rs.getInt(1));
-                venta.setFecha(rs.getString(2));
-                venta.setDni(rs.getString(3));
-                venta.setNombre(rs.getString(4));
-                venta.setTelefono(rs.getString(5));
-                venta.setMetodoPago(rs.getString(6));
-                venta.setDescripcion(rs.getString(7));
-                venta.setCantidad(rs.getInt(8));
-                venta.setPrecio(rs.getDouble(9));
-                venta.setTotal(rs.getDouble(10));
+                venta.setIdProducto(rs.getInt(2));
+                venta.setFecha(rs.getString(3));
+                venta.setDni(rs.getString(4));
+                venta.setNombre(rs.getString(5));
+                venta.setTelefono(rs.getString(6));
+                venta.setMetodoPago(rs.getString(7));
+                venta.setDescripcion(rs.getString(8));
+                venta.setCantidad(rs.getInt(9));
+                venta.setPrecio(rs.getDouble(10));
+                venta.setTotal(rs.getDouble(11));
                 lista.add(venta);
             }
         } catch (Exception e) {
@@ -73,6 +75,7 @@ public class DaoVentaImpl implements DaoVenta {
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT ")
                 .append("idVenta,")
+                .append("idProducto,")
                 .append("fecha,")
                 .append("dni,")
                 .append("nombre,")
@@ -91,15 +94,16 @@ public class DaoVentaImpl implements DaoVenta {
             while (rs.next()) {
                 venta = new Venta();
                 venta.setIdVenta(rs.getInt(1));
-                venta.setFecha(rs.getString(2));
-                venta.setDni(rs.getString(3));
-                venta.setNombre(rs.getString(4));
-                venta.setTelefono(rs.getString(5));
-                venta.setMetodoPago(rs.getString(6));
-                venta.setDescripcion(rs.getString(7));
-                venta.setCantidad(rs.getInt(8));
-                venta.setPrecio(rs.getDouble(9));
-                venta.setTotal(rs.getDouble(10));
+                venta.setIdProducto(rs.getInt(2));
+                venta.setFecha(rs.getString(3));
+                venta.setDni(rs.getString(4));
+                venta.setNombre(rs.getString(5));
+                venta.setTelefono(rs.getString(6));
+                venta.setMetodoPago(rs.getString(7));
+                venta.setDescripcion(rs.getString(8));
+                venta.setCantidad(rs.getInt(9));
+                venta.setPrecio(rs.getDouble(10));
+                venta.setTotal(rs.getDouble(11));
             }
         } catch (Exception e) {
             mensaje = e.getMessage();
@@ -112,6 +116,7 @@ public class DaoVentaImpl implements DaoVenta {
     public String VentaInsert(Venta venta) {
         StringBuilder sql = new StringBuilder();
         sql.append("INSERT INTO venta(")
+                .append("idProducto,")
                 .append("fecha,")
                 .append("dni,")
                 .append("nombre,")
@@ -121,18 +126,19 @@ public class DaoVentaImpl implements DaoVenta {
                 .append("cantidad,")
                 .append("precio,")
                 .append("total")
-                .append(") VALUES (?,?,?,?,?,?,?,?,?)");
+                .append(") VALUES (?,?,?,?,?,?,?,?,?,?)");
         try (Connection c = conexion.getConexion()) {
             PreparedStatement ps = c.prepareStatement(sql.toString());
-            ps.setString(1, venta.getFecha());
-            ps.setString(2, venta.getDni());
-            ps.setString(3, venta.getNombre());
-            ps.setString(4, venta.getTelefono());
-            ps.setString(5, venta.getMetodoPago());
-            ps.setString(6, venta.getDescripcion());
-            ps.setInt(7, venta.getCantidad());
-            ps.setDouble(8, venta.getPrecio());
-            ps.setDouble(9, venta.getTotal());
+            ps.setInt(1, venta.getIdProducto());
+            ps.setString(2, venta.getFecha());
+            ps.setString(3, venta.getDni());
+            ps.setString(4, venta.getNombre());
+            ps.setString(5, venta.getTelefono());
+            ps.setString(6, venta.getMetodoPago());
+            ps.setString(7, venta.getDescripcion());
+            ps.setInt(8, venta.getCantidad());
+            ps.setDouble(9, venta.getPrecio());
+            ps.setDouble(10, venta.getTotal());
             int cont = ps.executeUpdate();
             mensaje = (cont == 0) ? "No se insertó" : null;
         } catch (Exception e) {
@@ -145,6 +151,7 @@ public class DaoVentaImpl implements DaoVenta {
     public String VentaUptdate(Venta venta) {
         StringBuilder sql = new StringBuilder();
         sql.append("UPDATE venta SET ")
+                .append("idProducto = ?,")
                 .append("fecha = ?,")
                 .append("dni = ?,")
                 .append("nombre = ?,")
@@ -157,16 +164,17 @@ public class DaoVentaImpl implements DaoVenta {
                 .append("WHERE idVenta = ?");  // 1
         try (Connection c = conexion.getConexion()) {
             PreparedStatement ps = c.prepareStatement(sql.toString());
-            ps.setString(1, venta.getFecha());
-            ps.setString(2, venta.getDni());
-            ps.setString(3, venta.getNombre());
-            ps.setString(4, venta.getTelefono());
-            ps.setString(5, venta.getMetodoPago());
-            ps.setString(6, venta.getDescripcion());
-            ps.setInt(7, venta.getCantidad());
-            ps.setDouble(8, venta.getPrecio());
-            ps.setDouble(9, venta.getTotal());
-            ps.setInt(10, venta.getIdVenta());
+            ps.setInt(1, venta.getIdProducto());
+            ps.setString(2, venta.getFecha());
+            ps.setString(3, venta.getDni());
+            ps.setString(4, venta.getNombre());
+            ps.setString(5, venta.getTelefono());
+            ps.setString(6, venta.getMetodoPago());
+            ps.setString(7, venta.getDescripcion());
+            ps.setInt(8, venta.getCantidad());
+            ps.setDouble(9, venta.getPrecio());
+            ps.setDouble(10, venta.getTotal());
+            ps.setInt(11, venta.getIdVenta());
             int cont = ps.executeUpdate();
             mensaje = (cont == 0) ? "No se actualizó" : null;
         } catch (Exception e) {
@@ -178,8 +186,8 @@ public class DaoVentaImpl implements DaoVenta {
     @Override
     public String VentaDelete(Integer id) {
         StringBuilder sql = new StringBuilder();
-        sql.append("DELETE FROM usuario");
-        sql.append(" WHERE id = ?");
+        sql.append("DELETE FROM venta");
+        sql.append(" WHERE idVenta = ?");
         try (Connection c = conexion.getConexion()) {
             PreparedStatement ps = c.prepareStatement(sql.toString());
             ps.setInt(1, id);

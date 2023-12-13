@@ -48,7 +48,7 @@ public class DaoProductoImpl implements DaoProducto {
                 producto.setDescripcion(rs.getString(3));
                 producto.setPrecio(rs.getDouble(4));
                 producto.setStock(rs.getInt(5));
-                producto.setGenero(rs.getString(7));
+                producto.setGenero(rs.getString(6));
                 producto.setTipo(rs.getString(7));
                 producto.setFotoProducto(rs.getString(8));
                 producto.setFechaIngreso(rs.getString(9));
@@ -157,6 +157,25 @@ public class DaoProductoImpl implements DaoProducto {
             ps.setInt(9, producto.getId());
             int cont = ps.executeUpdate();
             mensaje = (cont == 0) ? "No se actualizó" : null;
+        } catch (Exception e) {
+            mensaje = e.getMessage();
+            System.out.println(mensaje);
+        }
+        return mensaje;
+    }
+
+    @Override
+    public String ProductoActualizarStock(Integer id, Integer cantidadVendida) {
+        StringBuilder sql = new StringBuilder();
+        sql.append("UPDATE producto SET ");
+        sql.append("stock = stock - ?");
+        sql.append(" WHERE id = ?");
+        try (Connection c = conexion.getConexion()) {
+            PreparedStatement ps = c.prepareStatement(sql.toString());
+            ps.setInt(1, cantidadVendida);
+            ps.setInt(2, id);
+            int cont = ps.executeUpdate();
+            mensaje = (cont == 0) ? "No se actualizó stock" : null;
         } catch (Exception e) {
             mensaje = e.getMessage();
             System.out.println(mensaje);

@@ -6,6 +6,7 @@ package com.mycompany.creacionescaleb.view.subpaginas;
 
 import com.mycompany.creacionescaleb.dao.DaoVenta;
 import com.mycompany.creacionescaleb.dao.impl.DaoVentaImpl;
+import com.mycompany.creacionescaleb.entidades.Venta;
 import com.mycompany.creacionescaleb.view.Dashboard;
 import java.awt.Dimension;
 import javax.swing.SwingUtilities;
@@ -83,6 +84,11 @@ public class VentasJPanel extends javax.swing.JPanel {
         jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 420, 100, 40));
 
         jButton4.setText("EDITAR");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
         jPanel1.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 420, 100, 40));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
@@ -138,9 +144,13 @@ public class VentasJPanel extends javax.swing.JPanel {
         } else {
             for (int i : jTable1.getSelectedRows()) {
                 try {
-                    dao.VentaDelete((int) jTable1.getValueAt(i, 0));
-                    model.removeRow(i);
-                    javax.swing.JOptionPane.showMessageDialog(this, "Venta eliminado correctamente.", "AVISO", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                    String estadoEliminacion = dao.VentaDelete((int) jTable1.getValueAt(i, 0));
+                    if (estadoEliminacion == null) {
+                        model.removeRow(i);
+                        javax.swing.JOptionPane.showMessageDialog(this, "Venta eliminado correctamente.", "AVISO", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        javax.swing.JOptionPane.showMessageDialog(this, "No se elimino la venta.", "AVISO", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    }
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
@@ -148,6 +158,35 @@ public class VentasJPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow != -1) {
+            try {
+                int idVentaEdit = (int) jTable1.getValueAt(selectedRow, 0);
+                invocarBotonEditar(idVentaEdit);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "Debes seleccionar el usuario a editar.\n", "AVISO", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_jButton4ActionPerformed
+    
+    private void invocarBotonEditar(Integer ventaId) {
+        DaoVenta dao = new DaoVentaImpl();
+        Venta ventaEdit = dao.ventaGet(ventaId);
+        // Crear una instancia de RegistroInventarioJPanel
+        RegistroVentaJPanel invt = new RegistroVentaJPanel(ventaEdit);
+
+        // Mostrar la instancia en el Dashboard
+        Dashboard.showJPanel(invt);
+        
+        // Establecer la foto del producto en la misma instancia
+        SwingUtilities.invokeLater(() -> {
+            invt.editionMode();
+        });
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;

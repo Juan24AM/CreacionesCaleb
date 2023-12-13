@@ -6,6 +6,7 @@ package com.mycompany.creacionescaleb.entidades;
  */
 public class Venta {
     private Integer idVenta;
+    private Integer idProducto;
     private String fecha;
     private String dni;
     private String nombre;
@@ -94,5 +95,13 @@ public class Venta {
 
     public void setTotal(double total) {
         this.total = total;
+    }
+
+    public Integer getIdProducto() {
+        return idProducto;
+    }
+
+    public void setIdProducto(Integer idProducto) {
+        this.idProducto = idProducto;
     }
 }
