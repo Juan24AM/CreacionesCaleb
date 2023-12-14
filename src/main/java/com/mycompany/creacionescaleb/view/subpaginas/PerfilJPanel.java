@@ -149,7 +149,10 @@ public class PerfilJPanel extends javax.swing.JPanel {
 
         jLabel10.setText("Fecha de creacion:");
 
+        btnEditar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/user-edit.png"))); // NOI18N
         btnEditar.setText("EDITAR");
+        btnEditar.setBorderPainted(false);
+        btnEditar.setContentAreaFilled(false);
         btnEditar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEditarActionPerformed(evt);
@@ -162,7 +165,10 @@ public class PerfilJPanel extends javax.swing.JPanel {
 
         jLabel13.setText("Correo:");
 
+        btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/contract.png"))); // NOI18N
         btnCancelar.setText("CANCELAR");
+        btnCancelar.setBorderPainted(false);
+        btnCancelar.setContentAreaFilled(false);
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelarActionPerformed(evt);

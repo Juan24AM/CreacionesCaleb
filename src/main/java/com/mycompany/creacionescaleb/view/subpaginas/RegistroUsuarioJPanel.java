@@ -45,13 +45,14 @@ public class RegistroUsuarioJPanel extends javax.swing.JPanel {
 
     public RegistroUsuarioJPanel(Usuario user, boolean edition) {
         initComponents();
-        dateFeCreacion.setDate(dateNow);
         this.usuarioResponsable = user;
         this.isEdition = edition;
         if(!isEdition) {
+            dateFeCreacion.setDate(dateNow);
             jLabel2.setText(String.format("RESPONSABLE: %s %s (%s)", user.getNombres(), user.getPaterno(), user.getDni()));
         } else {
             editionMode();
+            dateFeCreacion.setEnabled(false);
         }
     }
 
@@ -170,21 +171,29 @@ public class RegistroUsuarioJPanel extends javax.swing.JPanel {
         jPanel1.add(pswPassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 310, 210, 50));
         jPanel1.add(textIconFoto, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 50, 160, 220));
 
-        btnAgregarEditar.setText("AGREGAR");
+        btnAgregarEditar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pen.png"))); // NOI18N
+        btnAgregarEditar.setText("Agregar");
+        btnAgregarEditar.setBorder(null);
+        btnAgregarEditar.setBorderPainted(false);
+        btnAgregarEditar.setContentAreaFilled(false);
         btnAgregarEditar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAgregarEditarActionPerformed(evt);
             }
         });
-        jPanel1.add(btnAgregarEditar, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 420, 110, 40));
+        jPanel1.add(btnAgregarEditar, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 420, 120, 40));
 
-        btnRegresar.setText("REGRESAR");
+        btnRegresar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/left-arrow.png"))); // NOI18N
+        btnRegresar.setText("Regresar");
+        btnRegresar.setBorder(null);
+        btnRegresar.setBorderPainted(false);
+        btnRegresar.setContentAreaFilled(false);
         btnRegresar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRegresarActionPerformed(evt);
             }
         });
-        jPanel1.add(btnRegresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 420, 110, 40));
+        jPanel1.add(btnRegresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 420, 120, 40));
 
         btnBuscarDNI.setIcon(new javax.swing.ImageIcon(getClass().getResource("/searching.png"))); // NOI18N
         btnBuscarDNI.setBorder(null);
@@ -236,10 +245,10 @@ public class RegistroUsuarioJPanel extends javax.swing.JPanel {
         String materno = textMaterno.getText();
         String genero = boxGenero.getSelectedItem().toString();
         String feNacimiento = formato.format(dateFeNacimiento.getDate());
-        String correo = textCorreo.getText();
+        String correo = textCorreo.getText().toUpperCase();
         String feCreacion = formato.format(dateFeCreacion.getDate());
         String tipoUsuario = boxTipoUsuario.getSelectedItem().toString();
-        String nomUsuario = textNomUsuario.getText();
+        String nomUsuario = textNomUsuario.getText().toUpperCase();
         String p1 = new String(pswPassword.getPassword());
         String p2 = new String(pswPasswordConfirm.getPassword());
 
