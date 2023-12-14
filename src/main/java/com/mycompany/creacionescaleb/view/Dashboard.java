@@ -12,6 +12,7 @@ import com.mycompany.creacionescaleb.view.subpaginas.HomeJPanel;
 import com.mycompany.creacionescaleb.view.subpaginas.InventarioJPanel;
 import com.mycompany.creacionescaleb.view.subpaginas.RegistroInventarioJPanel;
 import com.mycompany.creacionescaleb.view.subpaginas.PerfilJPanel;
+import com.mycompany.creacionescaleb.view.subpaginas.UsuariosJPanel;
 import com.mycompany.creacionescaleb.view.subpaginas.VentasJPanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -36,36 +37,40 @@ public class Dashboard extends javax.swing.JFrame {
     /**
      * Creates new form Dashboard
      */
-    
-    LocalDate dateNow =  LocalDate.now();
+    LocalDate dateNow = LocalDate.now();
     LocalTime timeNow = LocalTime.now();
-    private Usuario usuarioLogin = new Usuario();
-    
+    private static Usuario usuarioLogin = new Usuario();
+
     public Dashboard() {
         initComponents();
         initContent();
     }
-    
+
     public Dashboard(Usuario user) {
         this.usuarioLogin = user;
         initComponents();
-        
+
         setDate();
         setBienvenida();
         initContent();
+        btnUsuarios.setEnabled(usuarioLogin.getTipoUsuario().equalsIgnoreCase("ADMIN") ? true : false);
     }
-    
-    private void setDate(){
+
+    private void setDate() {
         Locale spanishLocale = new Locale("es", "PE");
         String textDate = dateNow.format(DateTimeFormatter.ofPattern("'Hoy es' EEEE dd 'de' MMMM 'de' yyyy", spanishLocale));
         dateText.setText(textDate);
+    }
+
+    public static Usuario getUsuarioLogin() {
+        return usuarioLogin;
     }
     
     private void setBienvenida() {
         // Establecer límites de tiempo
         LocalTime limiteManana = LocalTime.parse("11:55:00");
         LocalTime limiteTarde = LocalTime.parse("18:00:00");
-        
+
         // Determinar el saludo según la hora actual
         String saludo;
         if (timeNow.isBefore(limiteManana)) {
@@ -75,11 +80,11 @@ public class Dashboard extends javax.swing.JFrame {
         } else {
             saludo = "noche";
         }
-        
+
         String textBienvenida = String.format("Bienvenido %s, que tengas una excelente %s.", usuarioLogin.getNombres(), saludo);
         bienvenidaText.setText(textBienvenida);
     }
-    
+
     private void setFotoInLabel(JLabel labelName, String base64Image, String root) {
         ImageIcon image = null;
         if (root == null) {
@@ -89,29 +94,29 @@ public class Dashboard extends javax.swing.JFrame {
             String fotoPersona = root;
             image = new ImageIcon(fotoPersona);
         }
-        
+
         Icon icon = new ImageIcon(
                 image.getImage().getScaledInstance(labelName.getWidth(), labelName.getHeight(), Image.SCALE_DEFAULT));
         labelName.setIcon(icon);
         this.repaint();
     }
-    
+
     private void initContent() {
         setColorButtons("Home");
         HomeJPanel hm = new HomeJPanel();
         showJPanel(hm);
     }
-    
-    public static void showJPanel (JPanel p) {
+
+    public static void showJPanel(JPanel p) {
         p.setSize(740, 480);
         p.setLocation(0, 0);
-        
+
         content.removeAll();
         content.add(p, BorderLayout.CENTER);
         content.revalidate();
         content.repaint();
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -130,6 +135,7 @@ public class Dashboard extends javax.swing.JFrame {
         btnClientes = new javax.swing.JButton();
         btnInventario = new javax.swing.JButton();
         btnUsuarios = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         bienvenidaText = new javax.swing.JLabel();
@@ -208,6 +214,11 @@ public class Dashboard extends javax.swing.JFrame {
         btnClientes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnClientes.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btnClientes.setIconTextGap(15);
+        btnClientes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClientesActionPerformed(evt);
+            }
+        });
 
         btnInventario.setBackground(new java.awt.Color(150, 127, 113));
         btnInventario.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -235,6 +246,25 @@ public class Dashboard extends javax.swing.JFrame {
         btnUsuarios.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnUsuarios.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btnUsuarios.setIconTextGap(15);
+        btnUsuarios.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUsuariosActionPerformed(evt);
+            }
+        });
+
+        jButton1.setBackground(new java.awt.Color(150, 127, 113));
+        jButton1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/exit.png"))); // NOI18N
+        jButton1.setText("Salir");
+        jButton1.setBorder(new javax.swing.border.MatteBorder(null));
+        jButton1.setBorderPainted(false);
+        jButton1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -242,13 +272,14 @@ public class Dashboard extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnHome, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnVentas, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnClientes, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnInventario, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnHome, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
+                    .addComponent(btnPerfil, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
+                    .addComponent(btnVentas, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
+                    .addComponent(btnClientes, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
+                    .addComponent(btnInventario, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
+                    .addComponent(btnUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, 280, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -268,7 +299,9 @@ public class Dashboard extends javax.swing.JFrame {
                 .addComponent(btnInventario, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(btnUsuarios, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(150, 150, 150))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(50, 50, 50))
         );
 
         jPanel2.setBackground(new java.awt.Color(203, 191, 184));
@@ -288,10 +321,10 @@ public class Dashboard extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(19, 19, 19)
-                        .addComponent(bienvenidaText, javax.swing.GroupLayout.PREFERRED_SIZE, 496, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(bienvenidaText, javax.swing.GroupLayout.PREFERRED_SIZE, 645, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 412, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -378,8 +411,8 @@ public class Dashboard extends javax.swing.JFrame {
             pf = new PerfilJPanel();
             showJPanel(pf);
         }
-        
-        
+
+
     }//GEN-LAST:event_btnPerfilActionPerformed
 
     private void btnVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVentasActionPerformed
@@ -415,22 +448,55 @@ public class Dashboard extends javax.swing.JFrame {
         InventarioJPanel invt = new InventarioJPanel();
         showJPanel(invt);
     }//GEN-LAST:event_btnInventarioActionPerformed
-    
+
+    private void btnClientesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClientesActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnClientesActionPerformed
+
+    private void btnUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsuariosActionPerformed
+        String butonName = btnUsuarios.getText();
+        setColorButtons(butonName);
+        UsuariosJPanel vts;
+        vts = new UsuariosJPanel();
+        if (usuarioLogin.getNombres() != null) {
+            if (usuarioLogin.getTipoUsuario().equalsIgnoreCase("ADMIN")) {
+                showJPanel(vts);
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "Usuario no autorizado para utilzar esta funcion.", "AVISO", javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            // No se ha inicio el programa desde el login. # Se hace de esta manera para las respectivas pruebas.
+            showJPanel(vts);
+        }
+    }//GEN-LAST:event_btnUsuariosActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        Login login = new Login();
+        login.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     public void setColorButtons(String name) {
         setDefaultColorBotones();
         Color colorSelect = new Color(203, 191, 184);
         switch (name) {
-            case "Home" -> btnHome.setBackground(colorSelect);
-            case "Perfil" -> btnPerfil.setBackground(colorSelect);
-            case "Ventas" -> btnVentas.setBackground(colorSelect);
-            case "Clientes" -> btnClientes.setBackground(colorSelect);
-            case "Inventario" -> btnInventario.setBackground(colorSelect);
-            case "Usuarios" -> btnUsuarios.setBackground(colorSelect);
+            case "Home" ->
+                btnHome.setBackground(colorSelect);
+            case "Perfil" ->
+                btnPerfil.setBackground(colorSelect);
+            case "Ventas" ->
+                btnVentas.setBackground(colorSelect);
+            case "Clientes" ->
+                btnClientes.setBackground(colorSelect);
+            case "Inventario" ->
+                btnInventario.setBackground(colorSelect);
+            case "Usuarios" ->
+                btnUsuarios.setBackground(colorSelect);
         }
     }
-    
+
     private void setDefaultColorBotones() {
-        Color Colordefult = new Color(150,127,113);
+        Color Colordefult = new Color(150, 127, 113);
         btnHome.setBackground(Colordefult);
         btnPerfil.setBackground(Colordefult);
         btnVentas.setBackground(Colordefult);
@@ -438,6 +504,7 @@ public class Dashboard extends javax.swing.JFrame {
         btnInventario.setBackground(Colordefult);
         btnUsuarios.setBackground(Colordefult);
     }
+
     /**
      * @param args the command line arguments
      */
@@ -484,6 +551,7 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JButton btnVentas;
     private static javax.swing.JPanel content;
     private javax.swing.JLabel dateText;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;

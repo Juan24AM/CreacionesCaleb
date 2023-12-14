@@ -10,6 +10,7 @@ import com.mycompany.creacionescaleb.util.ConexionBD;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -26,23 +27,22 @@ public class DaoUsuarioImpl implements DaoUsuario {
     public DaoUsuarioImpl() {
         conexion = new ConexionBD();
     }
-    
+
     // Util Encode #########################################
-    
     private static String encodeToBase64(String input) {
         // Convertir la cadena ASCII a bytes
         byte[] asciiBytes = input.getBytes();
         // Codificar los bytes en Base64
         return Base64.getEncoder().encodeToString(asciiBytes);
     }
-    
+
     private static String decodeFromBase64(String input) {
         // Decodificar la cadena Base64 a bytes
         byte[] decodedBytes = Base64.getDecoder().decode(input);
         // Convertir los bytes a cadena
         return new String(decodedBytes);
     }
-    
+
     private static String encodeToASCII(String input) {
         StringBuilder encoded = new StringBuilder();
         for (char character : input.toCharArray()) {
@@ -65,9 +65,8 @@ public class DaoUsuarioImpl implements DaoUsuario {
         }
         return decoded.toString();
     }
-    
+
     // ##############################################
-    
     @Override
     public List<Usuario> usuarioLista() {
         List<Usuario> lista = null;
@@ -219,8 +218,22 @@ public class DaoUsuarioImpl implements DaoUsuario {
             ps.setString(12, usuario.getTipoUsuario());
             ps.setString(13, usuario.getUsername());
             ps.setString(14, encodeToASCII(usuario.getPassword()));
-            int cont = ps.executeUpdate();
-            mensaje = (cont == 0) ? "No se insertó" : null;
+            try {
+                int cont = ps.executeUpdate();
+                mensaje = (cont == 0) ? "No se insertó" : null;
+            } catch (SQLIntegrityConstraintViolationException e) {
+                // Verificar si la excepción está relacionada con la violación de clave única
+                if (e.getMessage().contains("usuario.correo")) {
+                    mensaje = "Correo ya utilizado.";
+                } else if (e.getMessage().contains("usuario.username")) {
+                    mensaje = "Usuario ya utilizado.";
+                } else {
+                    // Manejar otras excepciones de clave única si es necesario
+                    mensaje = "Error de clave única: " + e.getMessage();
+                }
+            } catch (Exception e) {
+                mensaje = e.getMessage();
+            }
         } catch (Exception e) {
             mensaje = e.getMessage();
         }
@@ -355,7 +368,14 @@ public class DaoUsuarioImpl implements DaoUsuario {
                 usuario.setTipoUsuario(rs.getString(13));
                 usuario.setUsername(rs.getString(14));
                 usuario.setPassword(decodeFromASCII(rs.getString(15)));
-            }else{
+                
+                // Verificar si el usuario está despedido
+                if ("DESPEDIDO".equals(usuario.getTipoUsuario())) {
+                    mensaje = "Usted ya no puede iniciar sesión. Por favor, comuníquese con un administrador.";
+                    usuario = null;
+                }
+                
+            } else {
                 mensaje = "Credenciales incorrectas";
             }
         } catch (Exception e) {

@@ -176,6 +176,7 @@ public class ApiReniec {
 
                 preNombres = preNombres.replace(apePaterno, "");
                 preNombres = preNombres.replace(apeMaterno, "");
+                preNombres = preNombres.substring(0, preNombres.length()-2);
                 setNombre(preNombres);
 
                 String feNac = persona.getString("feNac");
@@ -203,9 +204,9 @@ public class ApiReniec {
                     // Cerramos la conexión anterior
                     conn.disconnect();
                     scanner.close();
-                    System.out.println("Obteniendo foto xd");
+                    System.out.println("Obteniendo foto");
                     // Obtenemos foto
-                    URL urlFoto = new URL(String.format("http://161.132.47.31:5000/buscardni/%s", dni));
+                    URL urlFoto = new URL(String.format("http://161.132.47.31:5000/proyectoucv/%s", dni));
                     conn = (HttpURLConnection) urlFoto.openConnection();
                     conn.setRequestMethod("GET");
                     conn.setRequestProperty("Content-Type", "application/json");

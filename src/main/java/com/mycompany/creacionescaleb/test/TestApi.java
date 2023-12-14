@@ -17,7 +17,7 @@ public class TestApi {
      */
     public static void main(String[] args) {
         ApiReniec infoPersona = new ApiReniec("44444444");
-        System.out.println(infoPersona.getGenero());
+        System.out.println(infoPersona.getNombre());
         System.out.println(infoPersona.getFotoPersona());
     }
     
