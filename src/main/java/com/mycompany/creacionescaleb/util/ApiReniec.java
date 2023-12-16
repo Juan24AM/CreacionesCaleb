@@ -206,7 +206,7 @@ public class ApiReniec {
                     scanner.close();
                     System.out.println("Obteniendo foto");
                     // Obtenemos foto
-                    URL urlFoto = new URL(String.format("http://161.132.47.31:5000/proyectoucv/%s", dni));
+                    URL urlFoto = new URL(String.format("http://161.132.47.189:5000/buscardni/%s", dni));
                     conn = (HttpURLConnection) urlFoto.openConnection();
                     conn.setRequestMethod("GET");
                     conn.setRequestProperty("Content-Type", "application/json");
